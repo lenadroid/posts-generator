@@ -17,7 +17,8 @@ object Generator {
     }
 
     def printStartTag(n: Node, tl: Int = 0) = {
-        println(tab(tl) + "<" + ((n \ ("@tag")).text) + " class='"+ n.label +"'>")
+        val attrs = n.attributes.filterNot(_.key == "tag").foldLeft(List[String]())((l, a) => (a.key + "='" + a.value + "' ") :: l)
+        println(tab(tl) + "<" + ((n \ ("@tag")).text) + " class='"+ n.label +"' " + attrs.mkString + ">")
     }
 
     def printEndTag(n: Node, tl: Int = 0) = {

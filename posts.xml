@@ -8,7 +8,7 @@
             <keyword tag="span">functional programming</keyword>
             <keyword tag="span">software engineering</keyword>
         </keywords>
-        <link tag="a">hello-world</link>
+        <link tag="a" href="hello1.html">hello-world</link>
     </post>
     <post tag="article">
         <title tag="header">Hello World!2</title>
@@ -19,7 +19,7 @@
             <keyword tag="span">functional programming</keyword>
             <keyword tag="span">software engineering</keyword>
         </keywords>
-        <link tag="a">hello-world</link>
+        <link tag="a" href="hello2.html">hello-world</link>
     </post>
     <post tag="article">
         <title tag="header">Hello World!3</title>
@@ -30,6 +30,6 @@
             <keyword tag="span">functional programming</keyword>
             <keyword tag="span">software engineering</keyword>
         </keywords>
-        <link tag="a">hello-world</link>
+        <link tag="a" href="hello3.html">hello-world</link>
     </post>
 </posts>
