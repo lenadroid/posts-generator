@@ -1,25 +1,26 @@
 import scala.xml.XML
+import scala.xml._
 
 object Generator {
 
-    def isNodeEmpty(n: xml.NodeSeq): Boolean = {
+    def isNodeEmpty(n: NodeSeq): Boolean = {
         n.text.replaceAll("\\s+$", "") == ""
     }
 
-    def isEmpty(node: xml.Node) = {
-        node.child.filter {c => !c.isInstanceOf[xml.Text] || !c.text.trim.isEmpty}.isEmpty
+    def isEmpty(node: Node) = {
+        node.child.filter {c => !c.isInstanceOf[Text] || !c.text.trim.isEmpty}.isEmpty
     }
 
-    def textOfNode(n: xml.Node): Option[String] = n match {
-        case xml.Elem(_, _, _, _, Seq(xml.Text(t))) => Some(t)
+    def textOfNode(n: Node): Option[String] = n match {
+        case Elem(_, _, _, _, Seq(Text(t))) => Some(t)
         case _ => None
     }
 
-    def printStartTag(n: xml.Node, tl: Int = 0) = {
+    def printStartTag(n: Node, tl: Int = 0) = {
         println(tab(tl) + "<" + ((n \ ("@tag")).text) + " class='"+ n.label +"'>")
     }
 
-    def printEndTag(n: xml.Node, tl: Int = 0) = {
+    def printEndTag(n: Node, tl: Int = 0) = {
         println(tab(tl) + "</" + ((n \ ("@tag")).text) + ">") 
     }
 
@@ -27,7 +28,7 @@ object Generator {
         println(tab(tl) + text)
     }
 
-    def printTextNode(n:xml.Node, tl: Int = 0) = {
+    def printTextNode(n:Node, tl: Int = 0) = {
         printStartTag(n, tl)
         val text = textOfNode(n)
         text match {
@@ -41,7 +42,7 @@ object Generator {
         ("   " * tl)
     }
 
-    def displayContent(element: xml.Node, tl:Int = 0):Unit = {
+    def displayContent(element: Node, tl:Int = 0):Unit = {
         printStartTag(element, tl)
         element.child.filterNot(c => isNodeEmpty(c)).map { c =>
             textOfNode(c) match {
