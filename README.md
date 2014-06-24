@@ -17,3 +17,32 @@ Sample configuration xml file (posts.xml):
     </post>
 </posts>
 ```
+Sample output (for now, just in colole):
+```html
+<section class='posts' >
+   <article class='post' >
+      <header class='title' >
+         Hello World!1
+      </header>
+      <div class='description' >
+         Yay! This is a first test post in my software engineering blog!
+      </div>
+      <div class='date' >
+         23.06.2014
+      </div>
+      <div class='keywords' >
+         <span class='keyword' >
+            hello world
+         </span>
+         <span class='keyword' >
+            functional programming
+         </span>
+         <span class='keyword' >
+            software engineering
+         </span>
+      </div>
+      <a class='link' href='hello1.html' >
+         hello-world
+      </a>
+   </article>
+```
