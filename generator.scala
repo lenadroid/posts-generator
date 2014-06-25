@@ -1,7 +1,11 @@
+
 import scala.xml.XML
 import scala.xml._
+import java.io._
 
 object Generator {
+
+    def fw = new FileWriter("Posts.html", true)
 
     def isNodeEmpty(n: NodeSeq): Boolean = {
         n.text.replaceAll("\\s+$", "") == ""
@@ -16,27 +20,27 @@ object Generator {
         case _ => None
     }
 
-    def printStartTag(n: Node, tl: Int = 0) = {
+    def getStartTag(n: Node, tl: Int = 0) = {
         val attrs = n.attributes.filterNot(_.key == "tag").foldLeft(List[String]())((l, a) => (a.key + "='" + a.value + "' ") :: l)
-        println(tab(tl) + "<" + ((n \ ("@tag")).text) + " class='"+ n.label +"' " + attrs.mkString + ">")
+        (tab(tl) + "<" + ((n \ ("@tag")).text) + " class='"+ n.label +"' " + attrs.mkString + ">")
     }
 
-    def printEndTag(n: Node, tl: Int = 0) = {
-        println(tab(tl) + "</" + ((n \ ("@tag")).text) + ">") 
+    def getEndTag(n: Node, tl: Int = 0) = {
+        (tab(tl) + "</" + ((n \ ("@tag")).text) + ">") 
     }
 
-    def printTextContent(text:String, tl: Int = 0) = {
-        println(tab(tl) + text)
+    def getTextContent(text:String, tl: Int = 0) = {
+        (tab(tl) + text)
     }
 
     def printTextNode(n:Node, tl: Int = 0) = {
-        printStartTag(n, tl)
+        print(getStartTag(n, tl), true)
         val text = textOfNode(n)
         text match {
-            case Some(s) => printTextContent(s, tl + 1)
-            case _ => print()
+            case Some(s) => print(getTextContent(s, tl + 1), true)
+            case _ => print("")
         }
-        printEndTag(n, tl)
+        print(getEndTag(n, tl), true)
     }
 
     def tab(tl:Int = 0):String = {
@@ -44,17 +48,31 @@ object Generator {
     }
 
     def displayContent(element: Node, tl:Int = 0):Unit = {
-        printStartTag(element, tl)
+        print(getStartTag(element, tl), true)
         element.child.filterNot(c => isNodeEmpty(c)).map { c =>
             textOfNode(c) match {
                 case Some(s) => printTextNode(c, tl + 1)
                 case _ => displayContent(c, tl + 1)
             } 
         }
-        printEndTag(element, tl)
+        print(getEndTag(element, tl), true)
+    }
+
+    def print(s:String, toFile:Boolean = false):Unit = {
+        if(toFile) {
+            val fw = new FileWriter("Posts.html", true)
+            try {
+              fw.write(s + "\n")
+            }
+            finally fw.close() 
+        }
+        else {
+            println(s)
+        }
     }
 
     def main(args: Array[String]): Unit = {
+        new File("Posts.html").delete() 
         val config = XML.loadFile("posts.xml")
         displayContent(config)
     }
