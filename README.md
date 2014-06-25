@@ -17,7 +17,7 @@ Sample configuration xml file (posts.xml):
     </post>
 </posts>
 ```
-Sample output (for now, just in colole):
+Sample output (for now, just in cosole and in file Posts.html):
 ```html
 <section class='posts' >
    <article class='post' >
