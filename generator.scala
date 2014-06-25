@@ -1,12 +1,17 @@
+import scala.io.Source
 import scala.xml.XML
 import scala.xml._
 import java.io._
-import scala.io.Source
 import java.io.PrintWriter
 
 object Generator {
 
-    val fw = new FileWriter("Posts.html", true)
+    var html = "Posts.html"
+    var template = "<template>"
+    var templateEnd = "</template>"
+    var postsxml = "posts.xml"
+
+    val fw = new FileWriter(html, true)
     val newLine = System.getProperty("line.separator")
 
     def isNodeEmpty(n: NodeSeq): Boolean = {
@@ -135,10 +140,34 @@ object Generator {
         }
     }
 
+    def setConfiguration(args:Array[String]) = {
+        if(args.length != 0) {
+            args.length match {
+                case 1  => html = args(0)
+                case 2 => {
+                    html = args(0)
+                    template = args(1)
+                }
+                case 3 => {
+                    html = args(0)
+                    template = args(1)
+                    templateEnd = args(2)
+                }
+                case 4 => {
+                    html = args(0)
+                    template = args(1)
+                    templateEnd = args(2)
+                    postsxml = args(3)
+                }
+            }
+        }
+    }
+
     def main(args: Array[String]): Unit = {
-        clearTemplateOfFile("Posts.html", "<template>", "</template>")
-        val config = XML.loadFile("posts.xml")
+        setConfiguration(args)
+        clearTemplateOfFile(html, template, templateEnd)
+        val config = XML.loadFile(postsxml)
         val result = displayContent(config, 2)
-        insertInside("Posts.html", result, "<template>")
+        insertInside(html, result, template)
     }
 }
