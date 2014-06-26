@@ -5,13 +5,11 @@ import java.io._
 import java.io.PrintWriter
 
 object Generator {
+    case class Settings(htmlOutputFile:String, xmlInputFile:String, templateStart:String, templateEnd:String)
 
-    var html = "Posts.html"
-    var template = "<template>"
-    var templateEnd = "</template>"
-    var postsxml = "posts.xml"
+    var settings = Settings("Posts.html", "posts.xml", """<!-- generated content starts -->""", """<!-- generated content ends -->""")
 
-    val fw = new FileWriter(html, true)
+    val fw = new FileWriter(settings.htmlOutputFile, true)
     val newLine = System.getProperty("line.separator")
 
     def isNodeEmpty(n: NodeSeq): Boolean = {
@@ -77,7 +75,7 @@ object Generator {
 
     def deleteFile(name: String) = {
         try {
-            val file = new File("Posts.html")
+            val file = new File(name)
             if(file.delete()) println(file.getName() + " is deleted!") else println("Delete operation is failed.")
         }
         catch {
@@ -143,31 +141,26 @@ object Generator {
     def setConfiguration(args:Array[String]) = {
         if(args.length != 0) {
             args.length match {
-                case 1  => html = args(0)
-                case 2 => {
-                    html = args(0)
-                    template = args(1)
-                }
-                case 3 => {
-                    html = args(0)
-                    template = args(1)
-                    templateEnd = args(2)
-                }
-                case 4 => {
-                    html = args(0)
-                    template = args(1)
-                    templateEnd = args(2)
-                    postsxml = args(3)
-                }
+                case 1 => settings = settings.copy(htmlOutputFile = args(0))
+                case 2 => settings = settings.copy(htmlOutputFile = args(0), templateStart = args(1))
+                case 3 => settings = settings.copy(htmlOutputFile = args(0), templateStart = args(1), templateEnd = args(2))
+                case 4 => settings = settings.copy(htmlOutputFile = args(0), 
+                                                   templateStart = args(1), 
+                                                   templateEnd = args(2), 
+                                                   xmlInputFile = args(3))
             }
         }
+        println("Output file name: " + settings.htmlOutputFile)
+        println("Start template: " + settings.templateStart)
+        println("End template: " + settings.templateEnd)
+        println("Input file name: " + settings.xmlInputFile)
     }
 
     def main(args: Array[String]): Unit = {
         setConfiguration(args)
-        clearTemplateOfFile(html, template, templateEnd)
-        val config = XML.loadFile(postsxml)
+        clearTemplateOfFile(settings.htmlOutputFile, settings.templateStart, settings.templateEnd)
+        val config = XML.loadFile(settings.xmlInputFile)
         val result = displayContent(config, 2)
-        insertInside(html, result, template)
+        insertInside(settings.htmlOutputFile, result, settings.templateStart)
     }
 }
