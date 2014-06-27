@@ -1,7 +1,23 @@
 Generator of HTML content for xml data
 ======================================
+All you need is a file with some start template and end template, for example:
 
-Sample configuration xml file (posts.xml):
+```html
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Posts</title> 
+</head>
+<html>
+   <body>
+    <!-- generated content starts -->
+
+    <!-- generated content ends -->
+   </body>
+</html>
+```
+
+And configuration xml file (posts.xml):
 ```xml
 <posts tag="section">
     <post tag="article">
@@ -17,32 +33,44 @@ Sample configuration xml file (posts.xml):
     </post>
 </posts>
 ```
-Sample output (for now, just in cosole and in file Posts.html):
+After runnung, here is smple output (for now, just in cosole and in file Posts.html):
 ```html
-<section class='posts' >
-   <article class='post' >
-      <header class='title' >
-         Hello World!1
-      </header>
-      <div class='description' >
-         Yay! This is a first test post in my software engineering blog!
-      </div>
-      <div class='date' >
-         23.06.2014
-      </div>
-      <div class='keywords' >
-         <span class='keyword' >
-            hello world
-         </span>
-         <span class='keyword' >
-            functional programming
-         </span>
-         <span class='keyword' >
-            software engineering
-         </span>
-      </div>
-      <a class='link' href='hello1.html' >
-         hello-world
-      </a>
-   </article>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Posts</title> 
+</head>
+<html>
+    <body>
+    <!-- generated content starts -->
+        <section class='posts' >
+           <article class='post' >
+              <header class='title' >
+                 Hello World!1
+              </header>
+              <div class='description' >
+                 Yay! This is a first test post in my software engineering blog!
+              </div>
+              <div class='date' >
+                 23.06.2014
+              </div>
+              <div class='keywords' >
+                 <span class='keyword' >
+                    hello world
+                 </span>
+                 <span class='keyword' >
+                    functional programming
+                 </span>
+                 <span class='keyword' >
+                    software engineering
+                 </span>
+              </div>
+              <a class='link' href='hello1.html' >
+                 hello-world
+              </a>
+           </article>
+        </section>
+    <!-- generated content ends -->
+    </body>
+</html>
 ```
