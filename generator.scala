@@ -7,7 +7,7 @@ import java.io.PrintWriter
 object Generator {
     case class Settings(htmlOutputFile:String, xmlInputFile:String, templateStart:String, templateEnd:String)
 
-    var settings = Settings("Posts.html", "posts.xml", """<!-- generated content starts -->""", """<!-- generated content ends -->""")
+    var settings = Settings("Posts.html", "settings\\posts.xml", """<!-- generated content starts -->""", """<!-- generated content ends -->""")
 
     val fw = new FileWriter(settings.htmlOutputFile, true)
     val newLine = System.getProperty("line.separator")
