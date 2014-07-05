@@ -1,6 +1,20 @@
 <config>
-<!--<inputfile>posts.xml</inputfile>
-	<outputfile>Posts.html</outputfile>
-	<startcommenttext>generated content starts</startcommenttext>
-	<endcommenttext>generated content ends</endcommenttext> -->
+	<item>
+	    <inputfile>settings\\posts.xml</inputfile>
+		<outputfile>Posts.html</outputfile>
+		<startcommenttext>generated content starts</startcommenttext>
+		<endcommenttext>generated content ends</endcommenttext>
+	</item>
+	<item>
+		<inputfile>settings\\twitter.html</inputfile>
+		<outputfile>Posts.html</outputfile>
+		<startcommenttext>Twitter Section starts</startcommenttext>
+		<endcommenttext>Twitter Section ends</endcommenttext>
+	</item>
+	<item>
+		<inputfile>settings\\metrica.html</inputfile>
+		<outputfile>Posts.html</outputfile>
+		<startcommenttext>Yandex metrica starts</startcommenttext>
+		<endcommenttext>Yandex metrica ends</endcommenttext>
+	</item>
 </config>

@@ -7,7 +7,7 @@ import java.io.PrintWriter
 object Generator {
     case class Settings(htmlOutputFile:String, xmlInputFile:String, templateStart:String, templateEnd:String)
 
-    var settings = Settings("Posts.html", "settings\\twitter.html", """<!-- Twitter Section starts -->""", """<!-- Twitter Section ends -->""")
+    var settings = Settings("output file", "input file", """start template""", """end template""")
 
     val fw = new FileWriter(settings.htmlOutputFile, true)
     val newLine = System.getProperty("line.separator")
@@ -26,7 +26,7 @@ object Generator {
     }
 
     def htmlComment(text: String):String = {
-        ("""<!--""" + text + """-->""")
+        ("""<!-- """ + text + """ -->""")
     }
 
     def getStartTag(n: Node, tl: Int = 0):String = {
@@ -150,23 +150,46 @@ object Generator {
     }
 
     def readConfiguration() = {
-        val config = XML.loadFile("config.xml")
+        val config = XML.loadFile("settings\\config.xml")
+        config.child.filterNot(c => isNodeEmpty(c)).foreach(c=> {
+            val inputFile = (c \ "inputfile").text
+            val outputFile = (c \ "outputfile").text
+            val templateStart = htmlComment((c \ "startcommenttext").text)
+            val templateEnd = htmlComment((c \ "endcommenttext").text)
 
-        val inputFile = (config \\ "inputfile").text
-        val outputFile = (config \\ "outputfile").text
-        val templateStart = (config \\ "startcommenttext").text
-        val templateEnd = (config \\ "endcommenttext").text
-        val in = if(inputFile.equals("")) Nil else inputFile
-        val out = if(outputFile.equals("")) Nil else outputFile
-        val ts = if(templateStart.equals("")) Nil else templateStart
-        val te = if(templateEnd.equals("")) Nil else templateEnd
+            printConfigItem(inputFile,outputFile,templateStart,templateEnd)
+            setConfiguration(Array(outputFile,templateStart,templateEnd, inputFile))
+
+            clearTemplateOfFile(settings.htmlOutputFile, settings.templateStart, settings.templateEnd)
+            val endshtml = settings.xmlInputFile.endsWith("html")
+            println(endshtml + " " + settings.xmlInputFile);
+            if(endshtml) {
+               insertInside(settings.htmlOutputFile,textOfFile(settings.xmlInputFile), settings.templateStart)
+            } else {
+                val posts = XML.loadFile(settings.xmlInputFile)
+                val result = displayContent(posts, 2)
+                insertInside(settings.htmlOutputFile, result, settings.templateStart)
+            }
+        })
+    }
+
+    def printAllConfiguration() = {
+        val config = XML.loadFile("settings\\config.xml")
+        config.child.filterNot(c => isNodeEmpty(c)).foreach(c=> {
+                val inputFile = (c \ "inputfile").text
+                val outputFile = (c \ "outputfile").text
+                val templateStart = (c \ "startcommenttext").text
+                val templateEnd = (c \ "endcommenttext").text
+                printConfigItem(inputFile,outputFile,templateStart,templateEnd)
+            })
+    }
+        
+    def printConfigItem(inputFile:String, outputFile:String, templateStart:String, templateEnd:String) = {
         println("Input file name: " + inputFile + "!")
         println("Output file name: " + outputFile + "!")
         println("Start template: " + templateStart + "!")
         println("End template: " + templateEnd + "!")
-
-        (in, out, ts, te)
-        //List(inputFile, outputFile, templateStart, templateEnd).map(a => if(a.equals("")) None else Some(a))
+        println()
     }
 
     def setConfiguration(args:Array[String]) = {
@@ -192,37 +215,19 @@ object Generator {
     }
 
     def main(args: Array[String]): Unit = {
-        setConfiguration(args)
-        // todo - foreach configuration setting do this
-        clearTemplateOfFile(settings.htmlOutputFile, settings.templateStart, settings.templateEnd)
-        val endshtml = settings.xmlInputFile.endsWith("html")
-        println(endshtml + " " + settings.xmlInputFile);
-        if(endshtml) {
-            insertInside(settings.htmlOutputFile,textOfFile(settings.xmlInputFile), settings.templateStart)
-        } else {
-            val posts = XML.loadFile(settings.xmlInputFile)
-            val result = displayContent(posts, 2)
-            insertInside(settings.htmlOutputFile, result, settings.templateStart)
-        }
-
-        // val sets = readConfiguration
-        // sets match {
-        //     case (in, Nil, Nil, Nil) => {
-        //         settings = settings.copy(xmlInputFile = in.toString)
-        //     }
-        //     case (Nil, out, Nil, Nil) => {
-        //         settings = settings.copy(htmlOutputFile = out.toString)
-        //     }
-        //     case (in, out, ts, Nil) => {
-        //         settings = settings.copy(xmlInputFile = in.toString, htmlOutputFile = out.toString, templateStart = ts.toString)
-        //     }
-        //     case (in, out, Nil, te) => {
-        //         settings = settings.copy(xmlInputFile = in.toString, htmlOutputFile = out.toString, templateEnd = te.toString)
-        //     }
-        //     case (in, out, ts, te) => {
-        //         settings = settings.copy(xmlInputFile = in.toString, htmlOutputFile = out.toString, templateStart = ts.toString, templateEnd = ts.toString)
-        //     }
+        readConfiguration()
+        // setConfiguration(args)
+        
+        // // todo - foreach configuration setting do this
+        // clearTemplateOfFile(settings.htmlOutputFile, settings.templateStart, settings.templateEnd)
+        // val endshtml = settings.xmlInputFile.endsWith("html")
+        // println(endshtml + " " + settings.xmlInputFile);
+        // if(endshtml) {
+        //     insertInside(settings.htmlOutputFile,textOfFile(settings.xmlInputFile), settings.templateStart)
+        // } else {
+        //     val posts = XML.loadFile(settings.xmlInputFile)
+        //     val result = displayContent(posts, 2)
+        //     insertInside(settings.htmlOutputFile, result, settings.templateStart)
         // }
-        // printSettings
     }
 }
