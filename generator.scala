@@ -149,30 +149,6 @@ object Generator {
         }
     }
 
-    def readConfiguration() = {
-        val config = XML.loadFile("settings\\config.xml")
-        config.child.filterNot(c => isNodeEmpty(c)).foreach(c=> {
-            val inputFile = (c \ "inputfile").text
-            val outputFile = (c \ "outputfile").text
-            val templateStart = htmlComment((c \ "startcommenttext").text)
-            val templateEnd = htmlComment((c \ "endcommenttext").text)
-
-            printConfigItem(inputFile,outputFile,templateStart,templateEnd)
-            setConfiguration(Array(outputFile,templateStart,templateEnd, inputFile))
-
-            clearTemplateOfFile(settings.htmlOutputFile, settings.templateStart, settings.templateEnd)
-            val endshtml = settings.xmlInputFile.endsWith("html")
-            println(endshtml + " " + settings.xmlInputFile);
-            if(endshtml) {
-               insertInside(settings.htmlOutputFile,textOfFile(settings.xmlInputFile), settings.templateStart)
-            } else {
-                val posts = XML.loadFile(settings.xmlInputFile)
-                val result = displayContent(posts, 2)
-                insertInside(settings.htmlOutputFile, result, settings.templateStart)
-            }
-        })
-    }
-
     def printAllConfiguration() = {
         val config = XML.loadFile("settings\\config.xml")
         config.child.filterNot(c => isNodeEmpty(c)).foreach(c=> {
@@ -214,20 +190,34 @@ object Generator {
         println("End template: " + settings.templateEnd)
     }
 
+    def readConfig(name:String) = {
+        XML.loadFile(name)
+    }
+
+    def build(c:Node) = {
+        val inputFile = (c \ "inputfile").text
+        val outputFile = (c \ "outputfile").text
+        val templateStart = htmlComment((c \ "startcommenttext").text)
+        val templateEnd = htmlComment((c \ "endcommenttext").text)
+
+        printConfigItem(inputFile,outputFile,templateStart,templateEnd)
+        setConfiguration(Array(outputFile,templateStart,templateEnd, inputFile))
+
+        clearTemplateOfFile(settings.htmlOutputFile, settings.templateStart, settings.templateEnd)
+        val endshtml = settings.xmlInputFile.endsWith("html")
+        println(endshtml + " " + settings.xmlInputFile);
+        if(endshtml) {
+            insertInside(settings.htmlOutputFile,textOfFile(settings.xmlInputFile), settings.templateStart)
+        } else {
+            val posts = XML.loadFile(settings.xmlInputFile)
+            val result = displayContent(posts, 2)
+            insertInside(settings.htmlOutputFile, result, settings.templateStart)
+        }
+    }
+
     def main(args: Array[String]): Unit = {
-        readConfiguration()
-        // setConfiguration(args)
-        
-        // // todo - foreach configuration setting do this
-        // clearTemplateOfFile(settings.htmlOutputFile, settings.templateStart, settings.templateEnd)
-        // val endshtml = settings.xmlInputFile.endsWith("html")
-        // println(endshtml + " " + settings.xmlInputFile);
-        // if(endshtml) {
-        //     insertInside(settings.htmlOutputFile,textOfFile(settings.xmlInputFile), settings.templateStart)
-        // } else {
-        //     val posts = XML.loadFile(settings.xmlInputFile)
-        //     val result = displayContent(posts, 2)
-        //     insertInside(settings.htmlOutputFile, result, settings.templateStart)
-        // }
+        val configName = if(args.length == 1) args(0) else "settings\\config.xml"
+        val config = readConfig(configName)
+        config.child.filterNot(c => isNodeEmpty(c)).foreach(c=> { build(c)})
     }
 }
