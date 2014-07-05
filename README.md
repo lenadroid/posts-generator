@@ -49,17 +49,8 @@ Configuration xml file (config.xml):
 </config>
 ```
 
-Sample directory structure:
-
-\projectroot
-------------\settings
-             --------config.xml
-             --------twitter.html
-             --------posts.xml
-             --------metrica.html
--------------Posts.html
-
 After running the project: scala generator.scala
+
 As a result there is such content in our output file (Posts.html):
 ```html
 <!DOCTYPE html>
